@@ -111,6 +111,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleDao, Article> impleme
         return new PageResult<>(articleBackDTOList, count);
     }
 
+
     @Override
     public List<ArticleHomeDTO> listArticles() {
         return articleDao.listArticles(PageUtils.getLimitCurrent(), PageUtils.getSize());

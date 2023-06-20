@@ -175,3 +175,7 @@ blog-springboot
 
 
 # blog-server
+# todo
+- 集成jwt，基于jwt的验证和鉴权。 参考资料https://juejin.cn/post/7025787630222573599
+- 添加多环境配置用来区分，开发测试生产
+

@@ -21,7 +21,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableScheduling
 @Slf4j
 public class BlogApplication {
-
+    
     public static void main(String[] args) {
         SpringApplication.run(BlogApplication.class, args);
         log.info("blog-service 启动成功");

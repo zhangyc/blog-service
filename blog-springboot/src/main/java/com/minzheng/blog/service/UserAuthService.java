@@ -39,7 +39,15 @@ public interface UserAuthService extends IService<UserAuth> {
      * @param user 用户对象
      */
     void register(UserVO user);
-
+    /**
+     * 用户登出
+     */
+    void logout();
+    /**
+     * 用户登录
+     *
+     */
+    String login(String username,String password);
     /**
      * qq登录
      *

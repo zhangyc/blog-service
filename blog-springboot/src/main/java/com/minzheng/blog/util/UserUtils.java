@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 public class UserUtils {
 
     /**
+     * 这些用户是存在服务端的session中的。
      * 获取当前登录用户
      *
      * @return 用户登录信息

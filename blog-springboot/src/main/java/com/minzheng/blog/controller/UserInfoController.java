@@ -39,6 +39,7 @@ public class UserInfoController {
      */
     @ApiOperation(value = "更新用户信息")
     @PutMapping("/users/info")
+
     public Result<?> updateUserInfo(@Valid @RequestBody UserInfoVO userInfoVO) {
         userInfoService.updateUserInfo(userInfoVO);
         return Result.ok();

@@ -43,7 +43,21 @@ public class UserAuthController {
         userAuthService.sendCode(username);
         return Result.ok();
     }
-
+    @AccessLimit(seconds = 60, maxCount = 10)
+    @ApiOperation(value = "登录")
+    @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String")
+    @GetMapping("/users/login")
+    public Result<?> login(String username,String password) {
+        return Result.ok(userAuthService.login(username,password));
+    }
+    @AccessLimit(seconds = 60, maxCount = 10)
+    @ApiOperation(value = "登出")
+    @ApiImplicitParam(name = "username", value = "用户名", required = true, dataType = "String")
+    @GetMapping("/users/logout")
+    public Result<?> logout() {
+        userAuthService.logout();
+        return Result.ok();
+    }
     /**
      * 获取用户区域分布
      *

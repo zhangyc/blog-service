@@ -5,13 +5,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minzheng.blog.constant.CommonConst;
+import com.minzheng.blog.dao.UserAuthDao;
 import com.minzheng.blog.dao.UserInfoDao;
 import com.minzheng.blog.dao.UserRoleDao;
 import com.minzheng.blog.dto.*;
-import com.minzheng.blog.entity.UserInfo;
 import com.minzheng.blog.entity.UserAuth;
-import com.minzheng.blog.dao.UserAuthDao;
+import com.minzheng.blog.entity.UserInfo;
 import com.minzheng.blog.entity.UserRole;
 import com.minzheng.blog.enums.LoginTypeEnum;
 import com.minzheng.blog.enums.RoleEnum;
@@ -19,21 +20,30 @@ import com.minzheng.blog.exception.BizException;
 import com.minzheng.blog.service.BlogInfoService;
 import com.minzheng.blog.service.RedisService;
 import com.minzheng.blog.service.UserAuthService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minzheng.blog.strategy.context.SocialLoginStrategyContext;
+import com.minzheng.blog.util.JwtTokenUtil;
 import com.minzheng.blog.util.PageUtils;
 import com.minzheng.blog.util.UserUtils;
 import com.minzheng.blog.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.minzheng.blog.constant.CommonConst.*;
@@ -51,11 +61,14 @@ import static com.minzheng.blog.util.CommonUtils.getRandomCode;
  * @date 2021/08/10
  */
 @Service
+@Slf4j
 public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuth> implements UserAuthService {
     @Autowired
     private RedisService redisService;
     @Autowired
     private UserAuthDao userAuthDao;
+    @Autowired
+    private UserDetailsServiceImpl userDetailsService;
     @Autowired
     private UserRoleDao userRoleDao;
     @Autowired
@@ -66,6 +79,10 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuth> impl
     private RabbitTemplate rabbitTemplate;
     @Autowired
     private SocialLoginStrategyContext socialLoginStrategyContext;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @Override
     public void sendCode(String username) {
@@ -139,10 +156,37 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuth> impl
         UserAuth userAuth = UserAuth.builder()
                 .userInfoId(userInfo.getId())
                 .username(user.getUsername())
-                .password(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()))
+                .password(passwordEncoder.encode(user.getPassword()))
                 .loginType(LoginTypeEnum.EMAIL.getType())
                 .build();
         userAuthDao.insert(userAuth);
+    }
+
+    @Override
+    public void logout() {
+        ///获取当前用户
+
+    }
+
+    @Override
+    public String login(String username, String password) {
+        String token = null;
+        try {
+            UserDetailDTO userDetails = (UserDetailDTO)userDetailsService.loadUserByUsername(username);
+            if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+                throw new BadCredentialsException("密码不正确");
+            }
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            ///使用redis来优化
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            token = jwtTokenUtil.generateToken(userDetails);
+            ///todo redis中多久以后这个token过期
+            redisService.set("login"+token,token,60*60*2);
+            ///增加redis管理token
+        } catch (AuthenticationException e) {
+            log.warn("登录异常:{}", e.getMessage());
+        }
+        return  token;
     }
 
     @Override
@@ -166,7 +210,7 @@ public class UserAuthServiceImpl extends ServiceImpl<UserAuthDao, UserAuth> impl
         if (Objects.nonNull(user) && BCrypt.checkpw(passwordVO.getOldPassword(), user.getPassword())) {
             UserAuth userAuth = UserAuth.builder()
                     .id(UserUtils.getLoginUser().getId())
-                    .password(BCrypt.hashpw(passwordVO.getNewPassword(), BCrypt.gensalt()))
+                    .password(passwordEncoder.encode(user.getPassword()))
                     .build();
             userAuthDao.updateById(userAuth);
         } else {

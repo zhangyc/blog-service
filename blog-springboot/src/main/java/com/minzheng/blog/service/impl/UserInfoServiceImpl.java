@@ -3,22 +3,20 @@ package com.minzheng.blog.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.minzheng.blog.strategy.context.UploadStrategyContext;
-import com.minzheng.blog.vo.*;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.minzheng.blog.dao.UserInfoDao;
 import com.minzheng.blog.dto.UserDetailDTO;
 import com.minzheng.blog.dto.UserOnlineDTO;
 import com.minzheng.blog.entity.UserInfo;
-import com.minzheng.blog.dao.UserInfoDao;
 import com.minzheng.blog.entity.UserRole;
 import com.minzheng.blog.enums.FilePathEnum;
 import com.minzheng.blog.exception.BizException;
 import com.minzheng.blog.service.RedisService;
 import com.minzheng.blog.service.UserInfoService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.minzheng.blog.service.UserRoleService;
-
+import com.minzheng.blog.strategy.context.UploadStrategyContext;
 import com.minzheng.blog.util.UserUtils;
-import com.minzheng.blog.vo.ConditionVO;
+import com.minzheng.blog.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
@@ -32,8 +30,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.minzheng.blog.constant.RedisPrefixConst.USER_CODE_KEY;
-import static com.minzheng.blog.util.PageUtils.*;
 import static com.minzheng.blog.util.PageUtils.getLimitCurrent;
+import static com.minzheng.blog.util.PageUtils.getSize;
 
 
 /**
@@ -58,6 +56,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoDao, UserInfo> impl
 
     @Transactional(rollbackFor = Exception.class)
     @Override
+    //@PreAuthorize("hasAnyAuthority('')")///
     public void updateUserInfo(UserInfoVO userInfoVO) {
         // 封装用户信息
         UserInfo userInfo = UserInfo.builder()

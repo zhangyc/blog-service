@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @Api(tags = "移动用户账号模块")
-@RestController
+@RestController()
 public class MobileAuthController {
     @Autowired
     private UserAuthService userAuthService;

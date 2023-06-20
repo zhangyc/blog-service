@@ -14,7 +14,7 @@
     <artifactId>blog-springboot</artifactId>
     <version>0.0.1</version>
     <name>blog</name>
-    <description>基于springboot + vue开发的前后端分离博客</description>
+    <description>HIVE服务端</description>
     <packaging>jar</packaging>
 
     <properties>
@@ -119,6 +119,11 @@
             <groupId>eu.bitwalker</groupId>
             <artifactId>UserAgentUtils</artifactId>
             <version>1.20</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.0</version>
         </dependency>
     </dependencies>
 
