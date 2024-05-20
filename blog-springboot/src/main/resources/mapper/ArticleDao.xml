@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.minzheng.blog.dao.ArticleDao">
+<mapper namespace="com.hackorange.pixify.dao.ArticleDao">
 
-    <resultMap id="articleHomeResultMap" type="com.minzheng.blog.dto.ArticleHomeDTO">
+    <resultMap id="articleHomeResultMap" type="com.hackorange.pixify.dto.ArticleHomeDTO">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
@@ -13,26 +13,26 @@
         <result column="category_id" property="categoryId"/>
         <result column="category_name" property="categoryName"/>
         <result column="content_format" property="contentFormat"/>
-        <collection property="tagDTOList" ofType="com.minzheng.blog.dto.TagDTO">
+        <collection property="tagDTOList" ofType="com.hackorange.pixify.dto.TagDTO">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
 
-    <resultMap id="articlePreviewResultMap" type="com.minzheng.blog.dto.ArticlePreviewDTO">
+    <resultMap id="articlePreviewResultMap" type="com.hackorange.pixify.dto.ArticlePreviewDTO">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
         <result column="create_time" property="createTime"/>
         <result column="category_id" property="categoryId"/>
         <result column="category_name" property="categoryName"/>
-        <collection property="tagDTOList" ofType="com.minzheng.blog.dto.TagDTO">
+        <collection property="tagDTOList" ofType="com.hackorange.pixify.dto.TagDTO">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
 
-    <resultMap id="articleResultMap" type="com.minzheng.blog.dto.ArticleDTO">
+    <resultMap id="articleResultMap" type="com.hackorange.pixify.dto.ArticleDTO">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
@@ -43,13 +43,13 @@
         <result column="update_time" property="updateTime"/>
         <result column="category_id" property="categoryId"/>
         <result column="category_name" property="categoryName"/>
-        <collection property="tagDTOList" ofType="com.minzheng.blog.dto.TagDTO">
+        <collection property="tagDTOList" ofType="com.hackorange.pixify.dto.TagDTO">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
     </resultMap>
 
-    <resultMap id="articleBackResultMap" type="com.minzheng.blog.dto.ArticleBackDTO">
+    <resultMap id="articleBackResultMap" type="com.hackorange.pixify.dto.ArticleBackDTO">
         <id column="id" property="id"/>
         <result column="article_cover" property="articleCover"/>
         <result column="article_title" property="articleTitle"/>
@@ -59,7 +59,7 @@
         <result column="is_delete" property="isDelete"/>
         <result column="status" property="status"/>
         <result column="category_name" property="categoryName"/>
-        <collection property="tagDTOList" ofType="com.minzheng.blog.dto.TagDTO">
+        <collection property="tagDTOList" ofType="com.hackorange.pixify.dto.TagDTO">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
         </collection>
@@ -271,7 +271,7 @@
     </select>
 
 
-    <select id="listRecommendArticles" resultType="com.minzheng.blog.dto.ArticleRecommendDTO">
+    <select id="listRecommendArticles" resultType="com.hackorange.pixify.dto.ArticleRecommendDTO">
         SELECT
           id,
           article_title,
@@ -294,7 +294,7 @@
            LIMIT 6
     </select>
 
-    <select id="listArticleStatistics" resultType="com.minzheng.blog.dto.ArticleStatisticsDTO">
+    <select id="listArticleStatistics" resultType="com.hackorange.pixify.dto.ArticleStatisticsDTO">
         SELECT
             DATE_FORMAT( create_time, "%Y-%m-%d" ) AS date,
             COUNT( 1 ) AS count
