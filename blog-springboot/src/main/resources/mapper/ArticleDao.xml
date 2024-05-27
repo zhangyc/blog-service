@@ -12,7 +12,6 @@
         <result column="is_top" property="isTop"/>
         <result column="category_id" property="categoryId"/>
         <result column="category_name" property="categoryName"/>
-        <result column="content_format" property="contentFormat"/>
         <collection property="tagDTOList" ofType="com.hackorange.pixify.dto.TagDTO">
             <id column="tag_id" property="id"/>
             <result column="tag_name" property="tagName"/>
@@ -70,7 +69,6 @@
 	 a.id,
 	 article_cover,
 	 article_title,
-	 content_format,
      SUBSTR( article_content, 1, 500 ) AS article_content,
 	 a.create_time,
      a.type,
@@ -89,7 +87,6 @@
 	    type,
 		is_top,
 		create_time,
-		content_format,
 		category_id
 	    FROM
  		tb_article
